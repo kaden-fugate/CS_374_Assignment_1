@@ -14,14 +14,23 @@ struct movie{
 
 };
 
-void printMovie(struct movie *cur_movie){
+int getYear(struct movie *cur_movie){ return cur_movie->year; }
 
-    printf("Title: %s\n", cur_movie->title);
-    printf("Year: %d\n", cur_movie->year);
-    for(int i = 0; i < cur_movie->num_languages; i++){ 
-        printf("Language %d: %s\n", i + 1, cur_movie->languages[i]); 
-    }
-    printf("Rating: %lf\n\n", cur_movie->rating);
+int getNumLanguages(struct movie *cur_movie){ return cur_movie->num_languages; }
+
+char** getLanguages(struct movie *cur_movie){ return cur_movie->languages; }
+
+double getRating(struct movie *cur_movie){ return cur_movie->rating; }
+
+void printMovie(struct movie *cur_movie, int user_option){
+
+    // print statement for movie by year
+    if(user_option == 1){ printf("%s\n", cur_movie->title); }
+
+    // print statment for top movies
+    if(user_option == 2){ printf("%d %.1f %s\n", cur_movie->year, cur_movie->rating, cur_movie->title); }
+
+    if(user_option == 3){ printf("%d %s\n", cur_movie->year, cur_movie->title); }
 
 }
 
@@ -39,6 +48,7 @@ struct movie* createMovie(char* title, int year, char* languages, int num_langua
     new_movie->title = malloc(strlen(title) + 1);
     strcpy(new_movie->title, title);
 
+    // mem for languages data member
     new_movie->languages = malloc(sizeof(char *) * num_languages);
     
     char* token = strtok(languages, ";");
@@ -66,13 +76,27 @@ struct movie* loadMovie(char *line){
     int str_len = strlen(languages_str_format) - 2;
 
     // make new string without square brackets 
-    char *new_str = malloc(str_len + 1);
+    char *new_str = malloc(sizeof(char) * (str_len + 1) );
     for(int i = 0; i < str_len; i++){ new_str[i] = languages_str_format[i + 1]; }
 
     // find number of languages
     int num_languages = 1;
     for(int i = 0; i < str_len; i++){ if(new_str[i] == ';'){ num_languages++; } }
-    
-    return createMovie(title, year, new_str, num_languages, rating);
 
+    struct movie *new_movie = createMovie(title, year, new_str, num_languages, rating);
+
+    free(new_str);
+    
+    return new_movie;
+
+}
+
+void freeMovie(struct movie *cur_movie){
+
+    free(cur_movie->title);
+
+    for(int i = 0; i < cur_movie->num_languages; i++){ free(cur_movie->languages[i]); }
+    free(cur_movie->languages);
+
+    free(cur_movie);
 }

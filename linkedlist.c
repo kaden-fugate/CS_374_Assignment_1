@@ -5,6 +5,7 @@
 #include "linkedlist.h"
 #include "movie.h"
 
+// single node will hold data and a pointer to the next node in the linked list
 struct node{
 
     void *data;
@@ -12,14 +13,18 @@ struct node{
 
 };
 
+// get the maximmum and minimum year a movie was published from the movies
+// found in a linked list
 void getMinAndMaxYear(struct node *head, int *min, int *max){
 
     struct node *temp = head;
 
+    // iterate through list
     while(temp){
 
         int cur_year = getYear( (struct movie *) temp->data );
 
+        // if cur year < min or > max, set new min/max
         if( cur_year < *min ){ *min = cur_year; }
         if( cur_year > *max ){ *max = cur_year; }
 
@@ -28,14 +33,18 @@ void getMinAndMaxYear(struct node *head, int *min, int *max){
 
 }
 
+// get the top rated movie for a given year given a linked list of movies
 void * getMaxMovieByYear(struct node *head, int year){
 
+    // init variables
     double max_rating = 0;
     struct node *temp = head;
     void *data = NULL;
 
+    // iterate through list
     while(temp){
 
+        // get year and rating of current movie being checked
         int cur_year = getYear( (struct movie *) temp->data );
         double cur_rating = getRating( (struct movie *) temp->data );
 
@@ -50,6 +59,9 @@ void * getMaxMovieByYear(struct node *head, int year){
 
 }
 
+// function will use the previous two functions to get the top movie by year
+// for each movie in the list. will first get range of valid year, then will
+// find each top movie in given list by year
 struct node * topMovieEachYear(struct node *head){
 
     // init list of max rated movies
@@ -60,6 +72,7 @@ struct node * topMovieEachYear(struct node *head){
     int max_year = 1900;
     getMinAndMaxYear(head, &min_year, &max_year);
 
+    // iterate through each year in range
     for(int i = max_year; i >= min_year; i--){
 
         // get max rated movie for year
@@ -85,9 +98,7 @@ struct node * findByYear(struct node *head, int year){
     while(temp){
 
         // if movies year matches user input year, add to new list
-        if(getYear( (struct movie *) temp->data ) == year ){
-            new_list = insert(new_list, temp->data);
-        }
+        if(getYear( (struct movie *) temp->data ) == year ){ new_list = insert(new_list, temp->data); }
 
         temp = temp->next;
     }
@@ -96,6 +107,7 @@ struct node * findByYear(struct node *head, int year){
 
 }
 
+// function will grab all movies of a given language in a linked list
 struct node * findByLanguage(struct node *head, char *language){
 
     // init vars
@@ -126,7 +138,7 @@ struct node * findByLanguage(struct node *head, char *language){
 
 }
 
-// insert at beginning of LL, O(1)
+// insert at beginning of LL
 struct node * insert(struct node *head, void *data){
 
     // create new head for linked list
@@ -138,7 +150,7 @@ struct node * insert(struct node *head, void *data){
     return new_head;
 }
 
-// get lenth of a given linked list, O(n)
+// get lenth of a given linked list
 int getLength(struct node *head){
     int length = 0;
     struct node *temp = head;
@@ -146,6 +158,7 @@ int getLength(struct node *head){
     return length;
 }
 
+// print entire linked list
 void printList(struct node *head, int user_option){ 
 
     struct node *temp = head; 
@@ -156,20 +169,4 @@ void printList(struct node *head, int user_option){
     } 
 
     printf("\n");
-}
-
-void freeList(struct node *head){
-
-    struct node *temp = NULL;
-
-    while(head){
-
-        temp = head;
-
-        freeMovie( (struct movie *) head->data );
-        head = head->next;
-        free(temp);
-
-    }
-
 }

@@ -1,9 +1,9 @@
 CC=gcc --std=c99 -g
 
-all: main
+all: movies
 
-main: main.c movie.o linkedlist.o
-	$(CC) main.c movie.o linkedlist.o -o main
+movies: main.c movie.o linkedlist.o
+	$(CC) main.c movie.o linkedlist.o -o movies
 
 movie.o: movie.c movie.h
 	$(CC) -c movie.c
@@ -11,8 +11,5 @@ movie.o: movie.c movie.h
 linkedlist.o: linkedlist.c linkedlist.h
 	$(CC) -c linkedlist.c
 
-run: main
-	./main movies_sample_1.csv
-
 clean:
-	rm -f *.o main
+	rm -f *.o movies
